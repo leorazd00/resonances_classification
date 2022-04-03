@@ -2,3 +2,8 @@ path_train: 'D:/projects/resonances_classification/data/train'
 path_test:  'D:/projects/resonances_classification/data/test'
 
 batch_size: 16
+
+model:
+    name: 'efficientnet_b0'
+    pretrained: False
+    n_classes: 3
