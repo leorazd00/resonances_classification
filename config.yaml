@@ -1,0 +1,4 @@
+path_train: 'D:/projects/resonances_classification/data/train'
+path_test:  'D:/projects/resonances_classification/data/test'
+
+batch_size: 16
