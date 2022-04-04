@@ -1,14 +1,10 @@
 import torch
 import torch.nn as nn
-from pathlib import Path
+import torchmetrics
 import pytorch_lightning as pl
 from dataset import ResonancesDataset
 from model import Model
 from torch.utils.data import DataLoader
-import yaml
-
-with open('D:/projects/resonances_classification/config.yaml', 'r') as file:
-    config = yaml.load(file, Loader=yaml.SafeLoader)
 
 
 class ResonancesDataModule(pl.LightningDataModule):
@@ -28,7 +24,7 @@ class ResonancesDataModule(pl.LightningDataModule):
             self.train_dataset,
             batch_size=self.batch_size,
             shuffle=False,
-            num_workers=0
+            num_workers=1
         )
 
     def val_dataloader(self):
@@ -36,7 +32,7 @@ class ResonancesDataModule(pl.LightningDataModule):
             self.val_dataset,
             batch_size=1,
             shuffle=False,
-            num_workers=0
+            num_workers=1
         )
 
     def test_dataloader(self):
@@ -44,7 +40,7 @@ class ResonancesDataModule(pl.LightningDataModule):
             self.test_dataset,
             batch_size=1,
             shuffle=False,
-            num_workers=0
+            num_workers=1
         )
 
 
@@ -55,57 +51,32 @@ class ResonancesClassifier(pl.LightningModule):
         self.n_classes = n_classes
         self.criterion = nn.CrossEntropyLoss()
 
+        self.train_acc = torchmetrics.Accuracy()
+        self.valid_acc = torchmetrics.Accuracy()
+
     def forward(self, x, labels=None):
-        output = self.model(x)
-        loss = 0
-        if labels is not None:
-            loss = self.criterion(output, labels)
-        return loss, output
+        return self.model(x)
 
     def training_step(self, batch, batch_idx):
-        inputs = batch[0]
-        labels = batch[1]
+        inputs, labels = batch
 
-        loss, outputs = self(inputs, labels)
-        self.log('training_loss', loss, prog_bar=True, logger=True)
+        pred = self(inputs)
+        loss = self.criterion(pred, labels)
+
+        self.train_acc(pred, labels)
+        self.log('train_acc', self.train_acc, on_epoch=True, on_step=False, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        inputs = batch[0]
-        labels = batch[1]
+        inputs, labels = batch
 
-        loss, outputs = self(inputs, labels)
-        self.log('validation_loss', loss, prog_bar=True, logger=True)
+        pred = self(inputs)
+        loss = self.criterion(pred, labels)
+
+        self.valid_acc(pred, labels)
+        self.log('valid_loss', loss, on_epoch=True, prog_bar=True)
+        self.log('valid_acc', self.valid_acc, on_epoch=True, prog_bar=True)
         return loss
 
     def configure_optimizers(self):
         return torch.optim.AdamW(self.parameters(), lr=0.0001)
-
-
-TRAIN_DIR = Path(config['path_train'])
-TEST_DIR = Path(config['path_test'])
-
-train_val_files = sorted(list(TRAIN_DIR.rglob('*.png')))
-test_files = sorted(list(TEST_DIR.rglob('*.png')))
-
-data_module = ResonancesDataModule(train_val_files, test_files, batch_size=config['batch_size'])
-data_module.setup()
-
-model = ResonancesClassifier(config['model']['n_classes'])
-
-trainer = pl.Trainer(max_epochs=1)
-trainer.fit(model, data_module)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
