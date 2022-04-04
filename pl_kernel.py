@@ -8,15 +8,16 @@ from torch.utils.data import DataLoader
 
 
 class ResonancesDataModule(pl.LightningDataModule):
-    def __init__(self, train_img, test_img, batch_size):
+    def __init__(self, train_img, val_img, test_img, batch_size):
         super().__init__()
         self.train_img = train_img
+        self.val_img = val_img
         self.test_img = test_img
         self.batch_size = batch_size
 
     def setup(self, stage=None):
         self.train_dataset = ResonancesDataset(self.train_img, mode='train')
-        self.val_dataset = ResonancesDataset(self.train_img, mode='val')
+        self.val_dataset = ResonancesDataset(self.val_img, mode='val')
         self.test_dataset = ResonancesDataset(self.test_img, mode='test')
 
     def train_dataloader(self):
@@ -45,10 +46,11 @@ class ResonancesDataModule(pl.LightningDataModule):
 
 
 class ResonancesClassifier(pl.LightningModule):
-    def __init__(self, n_classes: int):
+    def __init__(self, n_classes: int, lr: float, name: str = 'resnet18', pretrained: bool = True):
         super().__init__()
-        self.model = Model(n_classes)(name=config['model']['name'], pretrained=config['model']['pretrained'])
+        self.model = Model(n_classes)(name=name, pretrained=pretrained)
         self.n_classes = n_classes
+        self.lr = lr
         self.criterion = nn.CrossEntropyLoss()
 
         self.train_acc = torchmetrics.Accuracy()
@@ -79,4 +81,4 @@ class ResonancesClassifier(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=0.0001)
+        return torch.optim.AdamW(self.parameters(), lr=self.lr)

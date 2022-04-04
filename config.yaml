@@ -7,3 +7,4 @@ model:
     name: 'efficientnet_b0'
     pretrained: False
     n_classes: 3
+    lr: 1e-4
