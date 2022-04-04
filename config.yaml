@@ -1,10 +1,23 @@
-path_train: 'D:/projects/resonances_classification/data/train'
-path_test:  'D:/projects/resonances_classification/data/test'
+train_dataloader:
+    batch_size: 16
+    shuffle: True
+    num_workers: 1
 
-batch_size: 16
+val_dataloader:
+    batch_size: 1
+    shuffle: False
+    num_workers: 1
+
+test_dataloader:
+    batch_size: 11
+    shuffle: False
+    num_workers: 1
 
 model:
-    name: 'efficientnet_b0'
-    pretrained: False
+    name: 'resnet18'
     n_classes: 3
-    lr: 1e-4
+    pretrained: True
+
+train:
+    max_epochs: 3
+    gpus: 1
