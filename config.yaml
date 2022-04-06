@@ -22,3 +22,10 @@ model:
 train:
     max_epochs: 3
     gpus: 1
+
+infer:
+    device: 'cpu'
+    path_to_save: 'first_infer'
+    path_label_encoder: 'label_encoder.pkl'
+
+path_to_checkpoints: 'lightning_logs\version_0\epoch=2-step=114.ckpt'

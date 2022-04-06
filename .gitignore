@@ -23,7 +23,8 @@ dist/
 # Maven
 target/
 dist/
-
+lightning_logs/
+first_infer/
 # JetBrains IDE
 .idea/
 .venv/

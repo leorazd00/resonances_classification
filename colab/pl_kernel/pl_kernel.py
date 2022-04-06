@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torchmetrics
 import pytorch_lightning as pl
-from model import model
+from colab.model import model
 from torch.utils.data import DataLoader
 
 
