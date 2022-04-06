@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 class pl_kernel:
     def __init__(self, datasets, config):
         self.model = self.ResonancesClassifier(**config['model'])
-        self.dataset = self.ResonancesDataModule(datasets, config['model'])
+        self.dataset = self.ResonancesDataModule(datasets, config)
 
     def __call__(self):
         return self.model, self.dataset
