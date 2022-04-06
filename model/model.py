@@ -2,7 +2,7 @@ import torch.nn as nn
 from torchvision import models
 
 
-class Model:
+class Model():
     def __init__(self, n_classes: int = 3,
                  name='resnet18',
                  pretrained=False):
