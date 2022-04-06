@@ -20,19 +20,19 @@ class ResonancesDataModule(pl.LightningDataModule):
     def train_dataloader(self):
         return DataLoader(
             self.train_dataset,
-            **config['train_dataloader']
+            **self.config['train_dataloader']
         )
 
     def val_dataloader(self):
         return DataLoader(
             self.val_dataset,
-            **config['val_dataloader']
+            **self.config['val_dataloader']
         )
 
     def test_dataloader(self):
         return DataLoader(
             self.test_dataset,
-            **config['test_dataloader']
+            **self.config['test_dataloader']
         )
 
 
@@ -86,7 +86,7 @@ class pl_kernel:
 
     def __call__(self):
         model = ResonancesClassifier(**self.config['model'])
-        dataset = ResonancesDataModule(self.datasets, config)
+        dataset = ResonancesDataModule(self.datasets, self.config['model'])
         dataset.setup()
 
         return model, dataset
