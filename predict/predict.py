@@ -32,6 +32,10 @@ class predict:
         with torch.no_grad():
             inputs = inputs.to(self.device)
             self.model.eval()
-            logit = self.model(inputs).cpu()
+            if self.device == 'cpu':
+                logit = self.model(inputs).cpu()
+            else:
+                logit = self.model(inputs)
             probs = torch.nn.functional.softmax(logit, dim=-1).numpy()
+            
         return probs

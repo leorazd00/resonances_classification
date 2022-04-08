@@ -22,7 +22,7 @@ datasets = {'train_dataset': ResonancesDataset(train_files, mode='train'),
             'val_dataset': ResonancesDataset(train_files, mode='val'),
             'test_dataset': ResonancesDataset(test_files, mode='test')}
 
-kernel = pl_kernel(config)
+kernel = pl_kernel(config, datasets)
 model, data_module = kernel()
 
 pl.Trainer(**config['train']).fit(model, data_module)

@@ -13,9 +13,8 @@ class model:
 
     def __call__(self):
         if self.name == 'resnet18':
-            # resnet = models.resnet18(pretrained=self.pretrained)
-            # resnet.fc = nn.Linear(512, self.n_classes)
-            resnet = models.resnet18(pretrained=self.pretrained, num_classes=3)
+            resnet = models.resnet18(pretrained=self.pretrained)
+            resnet.fc = nn.Linear(512, self.n_classes)
             return resnet
 
         elif self.name == 'efficientnet_b0':
